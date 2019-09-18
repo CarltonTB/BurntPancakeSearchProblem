@@ -1,10 +1,14 @@
 
 
-class SearchTree:
+class SearchTreeNode:
 
-    def __init__(self, state, state_string, children):
+    def __init__(self, state, state_string, children, flip_index=None):
         self.state_string = state_string
         self.state = state
+        # The flip action that was taken to arrive in this state
+        self.flip_index = flip_index
+        # The cost of the flip action that was taken to arrive in this state
+        self.cost = len(state)-self.flip_index if flip_index is not None else None
         self.parent = None
         self.children = children
 

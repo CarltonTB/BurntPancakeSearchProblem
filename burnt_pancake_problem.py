@@ -2,7 +2,7 @@
 # Author: Carlton Brady
 from textwrap import wrap
 import queue
-from search_tree import *
+from search_tree_node import *
 
 
 def convert_input_string_to_problem(input_string):
@@ -13,10 +13,10 @@ def convert_input_string_to_problem(input_string):
     return start_state, search_type
 
 
-def get_next_state(state, flip_index, return_cost=True):
-    """given a state which is a list of strings and an index at which to flip,
-        return the next state, the cost of performing that flip, and the flip that was made"""
-    next_state = list.copy(state)
+def get_next_state(start_state_node, flip_index):
+    """given a state which is a SearchTree node and an index at which to flip,
+        return the next state node, the cost of performing that flip, and the flip that was made"""
+    next_state = list.copy(start_state_node.state)
     cost = len(next_state)-flip_index
     next_state[flip_index:len(next_state)] = next_state[flip_index:len(next_state)][::-1]
     for i in range(flip_index, len(next_state)):
@@ -25,18 +25,15 @@ def get_next_state(state, flip_index, return_cost=True):
         elif 'w' in next_state[i]:
             next_state[i] = next_state[i].replace('w', 'b')
 
-    if return_cost:
-        return next_state, cost, flip_index
-    else:
-        return next_state
+    return SearchTreeNode(next_state, "".join(next_state), {}, flip_index=flip_index)
 
 
-def get_possible_next_states(state, return_cost=True):
+def get_possible_next_states(state_node):
     """given a state which is a list of strings, return a list of all possible states
     that could be arrived at next with the action taken and their cost"""
     possible_next_states = []
-    for i in range(0, len(state)):
-        next_state = get_next_state(state, i, return_cost)
+    for i in range(0, len(state_node.state)):
+        next_state = get_next_state(state_node, i)
         possible_next_states.append(next_state)
     return possible_next_states
 
@@ -46,16 +43,8 @@ def goal_test(state):
     return state == ['1w', '2w', '3w', '4w']
 
 
-def convert_state_to_string(state):
-    """convert a state from list form back into a single string"""
-    state_string = ""
-    for pancake in state:
-        state_string += pancake
-    return state_string
-
-
-def get_tie_breaker_id(state):
-    state_string = convert_state_to_string(state)
+def get_tie_breaker_id(state_node):
+    state_string = "".join(state_node.state)
     state_string = state_string.replace('w', '1')
     state_string = state_string.replace('b', '0')
     return int(state_string)
@@ -88,17 +77,24 @@ def search(problem):
         return "No valid search algorithm was specified"
 
 
-def get_solution_state_sequence(goal_tree_node):
-    solution_list = []
+def get_solution_string(goal_tree_node):
+    state_sequence_solution_list = []
     cur_node = goal_tree_node
+    spatula_index = None
     while cur_node.parent is not None:
-        solution_list.append(cur_node.state_string)
+        if spatula_index is not None:
+            # insert the spatula into the string
+            cur_node.state.insert(spatula_index, '|')
+        state_sequence_solution_list.append("".join(cur_node.state))
+        spatula_index = cur_node.flip_index
         cur_node = cur_node.parent
-    solution_list.append(cur_node.state_string)
+    # when we exit the loop we are at the root of the tree, which is the start state
+    cur_node.state.insert(spatula_index, '|')
+    state_sequence_solution_list.append("".join(cur_node.state))
     # Reverse the order since we were traversing the tree from goal to start
-    solution_list = solution_list[::-1]
+    state_sequence_solution_list = state_sequence_solution_list[::-1]
     solution_string = ""
-    for state_string in solution_list:
+    for state_string in state_sequence_solution_list:
         solution_string += state_string + "\n"
     return solution_string
 
@@ -106,25 +102,27 @@ def get_solution_state_sequence(goal_tree_node):
 def run_bfs_search(start_state):
     """given a starting state that is a list of strings, run BFS search
      and print all steps taken to get to the goal state"""
-    search_tree_root = SearchTree(start_state, convert_state_to_string(start_state), {})
+    search_tree_root = SearchTreeNode(start_state, "".join(start_state), {})
     # the fringe is a FIFO queue
     fringe = queue.Queue()
     # first, we enqueue the start state and update the search tree
     fringe.put(search_tree_root)
     # Next, do BFS until the goal is in the fringe
-    print("Running BFS Search...")
+    print("Running BFS...")
     while not fringe.empty():
         node_to_expand = fringe.get()
         if heuristic(node_to_expand.state) == 0:
-            return get_solution_state_sequence(node_to_expand)
+            print("Solution found:\n")
+            solution_string = get_solution_string(node_to_expand)
+            print(solution_string)
+            return solution_string
         else:
-            possible_next_states = get_possible_next_states(node_to_expand.state, return_cost=False)
+            possible_next_states = get_possible_next_states(node_to_expand)
             # put the possible next states in descending order based on tie-breaker id
             possible_next_states = sorted(possible_next_states, key=get_tie_breaker_id, reverse=True)
-            for state in possible_next_states:
-                new_state = SearchTree(state, convert_state_to_string(state), {})
-                fringe.put(new_state)
-                node_to_expand.add_child(new_state)
+            for new_state_node in possible_next_states:
+                fringe.put(new_state_node)
+                node_to_expand.add_child(new_state_node)
     return "Error: failed to find a solution using BFS"
 
 
