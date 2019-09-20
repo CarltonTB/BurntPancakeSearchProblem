@@ -58,10 +58,10 @@ class PancakeTests(unittest.TestCase):
         next_state_list = get_possible_next_states(test_start_state_node)
         self.assertEqual(4, len(next_state_list))
 
-    def test_bfs_search(self):
-        solution = run_bfs_search(['4b', '3b', '2b', '1b'])
-        solution2 = run_bfs_search(['1b', '2b', '3b', '4b'])
-        solution3 = run_bfs_search(['1b', '2b', '3b', '4w'])
+    def test_bfs(self):
+        solution = run_bfs(['4b', '3b', '2b', '1b'])
+        solution2 = run_bfs(['1b', '2b', '3b', '4b'])
+        solution3 = run_bfs(['1b', '2b', '3b', '4w'])
 
         self.assertTrue("1w2w3w4w" in solution)
         # The number of new line characters will match the number of states in the solution
@@ -72,6 +72,26 @@ class PancakeTests(unittest.TestCase):
 
         self.assertTrue("1w2w3w4w" in solution3)
         self.assertEqual(9, solution3.count('\n'))
+
+    def test_a_star_search(self):
+        solution = run_a_star_search(['4b', '3b', '2b', '1b'])
+        solution2 = run_a_star_search(['1b', '2b', '3b', '4b'])
+        solution3 = run_a_star_search(['1b', '2b', '3b', '4w'])
+        self.assertTrue("1w2w3w4w" in solution)
+        # The number of new line characters will match the number of states in the solution
+        self.assertEqual(2, solution.count('\n'))
+
+        self.assertTrue("1w2w3w4w" in solution2)
+        self.assertEqual(11, solution2.count('\n'))
+
+        self.assertTrue("1w2w3w4w" in solution3)
+        self.assertEqual(10, solution3.count('\n'))
+
+    def test_compare_searches(self):
+        solution_a_star = run_a_star_search(['1b', '2b', '3b', '4w'])
+        solution_bfs = run_bfs(['1b', '2b', '3b', '4w'], show_costs=True)
+        self.assertTrue("1w2w3w4w g=19" in solution_a_star)
+        self.assertTrue("1w2w3w4w g=23" in solution_bfs)
 
 
 if __name__ == '__main__':

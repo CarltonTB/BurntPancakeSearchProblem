@@ -72,25 +72,35 @@ def search(problem):
     if search_type == '-a':
         return run_a_star_search(problem[0])
     elif search_type == '-f':
-        return run_bfs_search(problem[0])
+        return run_bfs(problem[0])
     else:
         return "No valid search algorithm was specified"
 
 
-def get_solution_string(goal_tree_node):
+def get_solution_string(goal_tree_node, show_costs=False):
     state_sequence_solution_list = []
     cur_node = goal_tree_node
     spatula_index = None
     while cur_node.parent is not None:
+        g = get_total_cost_along_path(cur_node)
+        h = heuristic(cur_node.state)
+        cost_string = ""
         if spatula_index is not None:
             # insert the spatula into the string
             cur_node.state.insert(spatula_index, '|')
-        state_sequence_solution_list.append("".join(cur_node.state))
+        if show_costs:
+            cost_string += " g=" + str(g) + ", h=" + str(h)
+        state_sequence_solution_list.append("".join(cur_node.state) + cost_string)
         spatula_index = cur_node.flip_index
         cur_node = cur_node.parent
     # when we exit the loop we are at the root of the tree, which is the start state
+    g = get_total_cost_along_path(cur_node)
+    h = heuristic(cur_node.state)
+    cost_string = ""
+    if show_costs:
+        cost_string += " g=" + str(g) + ", h=" + str(h)
     cur_node.state.insert(spatula_index, '|')
-    state_sequence_solution_list.append("".join(cur_node.state))
+    state_sequence_solution_list.append("".join(cur_node.state) + cost_string)
     # Reverse the order since we were traversing the tree from goal to start
     state_sequence_solution_list = state_sequence_solution_list[::-1]
     solution_string = ""
@@ -99,21 +109,31 @@ def get_solution_string(goal_tree_node):
     return solution_string
 
 
-def run_bfs_search(start_state):
+def get_total_cost_along_path(state_node):
+    """Given a search tree node, calculate total cost it takes to get to that state"""
+    cur_node = state_node
+    total_cost = 0
+    while cur_node.parent is not None:
+        total_cost += cur_node.cost
+        cur_node = cur_node.parent
+    return total_cost
+
+
+def run_bfs(start_state, show_costs=False):
     """given a starting state that is a list of strings, run BFS search
      and print all steps taken to get to the goal state"""
     search_tree_root = SearchTreeNode(start_state, "".join(start_state), {})
     # the fringe is a FIFO queue
     fringe = queue.Queue()
-    # first, we enqueue the start state and update the search tree
+    # first, we enqueue the start state
     fringe.put(search_tree_root)
     # Next, do BFS until the goal is in the fringe
     print("Running BFS...")
     while not fringe.empty():
         node_to_expand = fringe.get()
-        if heuristic(node_to_expand.state) == 0:
+        if goal_test(node_to_expand.state):
             print("Solution found:\n")
-            solution_string = get_solution_string(node_to_expand)
+            solution_string = get_solution_string(node_to_expand, show_costs=show_costs)
             print(solution_string)
             return solution_string
         else:
@@ -121,12 +141,36 @@ def run_bfs_search(start_state):
             # put the possible next states in descending order based on tie-breaker id
             possible_next_states = sorted(possible_next_states, key=get_tie_breaker_id, reverse=True)
             for new_state_node in possible_next_states:
-                fringe.put(new_state_node)
                 node_to_expand.add_child(new_state_node)
+                fringe.put(new_state_node)
     return "Error: failed to find a solution using BFS"
 
 
-def run_a_star_search(start_state):
+def run_a_star_search(start_state, show_costs=True):
     """given a starting state that is a list of strings, run A* search
      and print all steps taken to get to the goal state"""
-    return
+    search_tree_root = SearchTreeNode(start_state, "".join(start_state), {})
+    # The fringe is a priority queue, with the priority number being the value return from the function:
+    # f(n) = g(n) + h(n)
+    fringe = queue.PriorityQueue()
+    g = 0
+    # first, we enqueue the start state
+    fringe.put((g + heuristic(start_state), search_tree_root))
+    # Next, do A* until the goal is dequeue'd from the priority queue
+    print("Running A* search...")
+    while not fringe.empty():
+        node_to_expand = fringe.get()[1]
+        # g = get_total_cost_along_path(node_to_expand)
+        if heuristic(node_to_expand.state) == 0:
+            print("Solution found:\n")
+            solution_string = get_solution_string(node_to_expand, show_costs=show_costs)
+            print(solution_string)
+            return solution_string
+        else:
+            possible_next_states = get_possible_next_states(node_to_expand)
+            # put the possible next states in the priority queue based on f(n) value
+            for new_state_node in possible_next_states:
+                node_to_expand.add_child(new_state_node)
+                fringe.put((get_total_cost_along_path(new_state_node) + heuristic(new_state_node.state), new_state_node))
+    return "Error: failed to find a solution using A* search"
+
