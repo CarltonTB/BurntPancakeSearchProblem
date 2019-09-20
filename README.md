@@ -26,3 +26,11 @@ Input:
 Output:  
 |4b3b2b1b  
 1w2w3w4w  
+
+
+Implemented using Python3. to run it, pass search problems as arguments:
+python3 burnt_pancake_problem.py 1b2b3b4w-a
+
+or simply run the script and you will be prompted to enter a search problem:
+python3 burnt_pancake_problem.py
+Enter a search problem in the form '1b2b3b4w-a' where -a means A* search and -f means BFS search

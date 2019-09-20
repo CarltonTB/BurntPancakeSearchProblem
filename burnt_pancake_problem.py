@@ -2,6 +2,7 @@
 # Author: Carlton Brady
 from textwrap import wrap
 import queue
+import sys
 from search_tree_node import *
 
 
@@ -9,7 +10,7 @@ def convert_input_string_to_problem(input_string):
     """given an input string of the form 1b2b3b4w-a return a tuple containing
     a list of strings for the state and a single string for the search algorithm to use"""
     start_state = wrap(input_string, 2)
-    search_type = start_state.pop(len(start_state)-1)
+    search_type = start_state.pop(len(start_state) - 1)
     return start_state, search_type
 
 
@@ -17,7 +18,7 @@ def get_next_state(start_state_node, flip_index):
     """given a state which is a SearchTree node and an index at which to flip,
         return the next state node, the cost of performing that flip, and the flip that was made"""
     next_state = list.copy(start_state_node.state)
-    cost = len(next_state)-flip_index
+    cost = len(next_state) - flip_index
     next_state[flip_index:len(next_state)] = next_state[flip_index:len(next_state)][::-1]
     for i in range(flip_index, len(next_state)):
         if 'b' in next_state[i]:
@@ -171,6 +172,31 @@ def run_a_star_search(start_state, show_costs=True):
             # put the possible next states in the priority queue based on f(n) value
             for new_state_node in possible_next_states:
                 node_to_expand.add_child(new_state_node)
-                fringe.put((get_total_cost_along_path(new_state_node) + heuristic(new_state_node.state), new_state_node))
+                fringe.put(
+                    (get_total_cost_along_path(new_state_node) + heuristic(new_state_node.state), new_state_node))
     return "Error: failed to find a solution using A* search"
 
+
+def run_search(start_state, search_type):
+    if search_type == '-f':
+        return run_bfs(start_state)
+    elif search_type == '-a':
+        return run_a_star_search(start_state)
+    else:
+        print("Please input a valid search type")
+        return
+
+
+def main():
+    if len(sys.argv) >= 2:
+        problem = convert_input_string_to_problem(sys.argv[1])
+        run_search(problem[0], problem[1])
+    else:
+        user_input = input("Enter a search problem in the form '1b2b3b4w-a' "
+                           "where -a means A* search and -f means BFS search\n")
+        problem = convert_input_string_to_problem(user_input)
+        run_search(problem[0], problem[1])
+
+
+if __name__ == "__main__":
+    main()
