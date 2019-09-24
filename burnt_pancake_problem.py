@@ -1,4 +1,4 @@
-# Solve the burnt pancake problem using either BFS or A*
+# Solve the burnt pancake problem using either BFS or A* search
 # Author: Carlton Brady
 from textwrap import wrap
 import queue
