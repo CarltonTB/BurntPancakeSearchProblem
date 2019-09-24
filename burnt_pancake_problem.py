@@ -193,7 +193,7 @@ def main():
         run_search(problem[0], problem[1])
     else:
         user_input = input("Enter a search problem in the form '1b2b3b4w-a' "
-                           "where -a means A* search and -f means BFS search\n")
+                           "where -a means A* search and -f means BFS\n")
         problem = convert_input_string_to_problem(user_input)
         run_search(problem[0], problem[1])
 
