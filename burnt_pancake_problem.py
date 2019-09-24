@@ -8,7 +8,7 @@ from search_tree_node import *
 
 def convert_input_string_to_problem(input_string):
     """given an input string of the form 1b2b3b4w-a return a tuple containing
-    a list of strings for the state and a single string for the search algorithm to use"""
+    a list of strings for the state, and a single string for the search algorithm to use"""
     start_state = wrap(input_string, 2)
     search_type = start_state.pop(len(start_state) - 1)
     return start_state, search_type
@@ -16,9 +16,8 @@ def convert_input_string_to_problem(input_string):
 
 def get_next_state(start_state_node, flip_index):
     """given a state which is a SearchTree node and an index at which to flip,
-        return the next state node, the cost of performing that flip, and the flip that was made"""
+        return the next state node"""
     next_state = list.copy(start_state_node.state)
-    cost = len(next_state) - flip_index
     next_state[flip_index:len(next_state)] = next_state[flip_index:len(next_state)][::-1]
     for i in range(flip_index, len(next_state)):
         if 'b' in next_state[i]:
@@ -121,7 +120,7 @@ def get_total_cost_along_path(state_node):
 
 
 def run_bfs(start_state, show_costs=False):
-    """given a starting state that is a list of strings, run BFS search
+    """given a starting state that is a list of strings, run BFS
      and print all steps taken to get to the goal state"""
     search_tree_root = SearchTreeNode(start_state, "".join(start_state), {})
     # the fringe is a FIFO queue
@@ -161,7 +160,6 @@ def run_a_star_search(start_state, show_costs=True):
     print("Running A* search...")
     while not fringe.empty():
         node_to_expand = fringe.get()[1]
-        # g = get_total_cost_along_path(node_to_expand)
         if heuristic(node_to_expand.state) == 0:
             print("Solution found:\n")
             solution_string = get_solution_string(node_to_expand, show_costs=show_costs)
