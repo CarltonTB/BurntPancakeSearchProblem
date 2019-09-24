@@ -14,8 +14,8 @@ class SearchTreeTests(unittest.TestCase):
         n1.add_child(n3)
         n1.add_child(n2)
         root.add_child(n1)
-        self.assertEqual(2, get_total_cost_along_path(n3))
-        self.assertEqual(3, get_total_cost_along_path(n2))
+        self.assertEqual(8, get_total_cost_along_path(n3))
+        self.assertEqual(7, get_total_cost_along_path(n2))
         self.assertEqual(1, len(root.children.keys()))
 
     def test_tree_node_priority_queue(self):

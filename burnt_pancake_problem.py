@@ -18,13 +18,12 @@ def get_next_state(start_state_node, flip_index):
     """given a state which is a SearchTree node and an index at which to flip,
         return the next state node"""
     next_state = list.copy(start_state_node.state)
-    next_state[flip_index:len(next_state)] = next_state[flip_index:len(next_state)][::-1]
-    for i in range(flip_index, len(next_state)):
+    next_state[0:flip_index+1] = next_state[0:flip_index+1][::-1]
+    for i in range(0, flip_index+1):
         if 'b' in next_state[i]:
             next_state[i] = next_state[i].replace('b', 'w')
         elif 'w' in next_state[i]:
             next_state[i] = next_state[i].replace('w', 'b')
-
     return SearchTreeNode(next_state, "".join(next_state), {}, flip_index=flip_index)
 
 
@@ -91,7 +90,7 @@ def get_solution_string(goal_tree_node, show_costs=False):
         if show_costs:
             cost_string += " g=" + str(g) + ", h=" + str(h)
         state_sequence_solution_list.append("".join(cur_node.state) + cost_string)
-        spatula_index = cur_node.flip_index
+        spatula_index = cur_node.flip_index + 1
         cur_node = cur_node.parent
     # when we exit the loop we are at the root of the tree, which is the start state
     g = get_total_cost_along_path(cur_node)

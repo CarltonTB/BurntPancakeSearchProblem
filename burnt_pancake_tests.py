@@ -14,23 +14,23 @@ class PancakeTests(unittest.TestCase):
         test_start_state = ['4b', '1w', '2w', '3b']
         test_start_state_node = SearchTreeNode(test_start_state, "".join(test_start_state), {})
         next_state_node = get_next_state(test_start_state_node, 0)
-        self.assertEqual((['3w', '2b', '1b', '4w']), next_state_node.state)
-        self.assertEqual(4, next_state_node.cost)
+        self.assertEqual((['4w', '1w', '2w', '3b']), next_state_node.state)
+        self.assertEqual(1, next_state_node.cost)
         self.assertEqual(0, next_state_node.flip_index)
 
         next_state_node2 = get_next_state(test_start_state_node, 1)
-        self.assertEqual((['4b', '3w', '2b', '1b']), next_state_node2.state)
-        self.assertEqual(3, next_state_node2.cost)
+        self.assertEqual((['1b', '4w', '2w', '3b']), next_state_node2.state)
+        self.assertEqual(2, next_state_node2.cost)
         self.assertEqual(1, next_state_node2.flip_index)
 
         next_state_node3 = get_next_state(test_start_state_node, 2)
-        self.assertEqual((['4b', '1w', '3w', '2b']), next_state_node3.state)
-        self.assertEqual(2, next_state_node3.cost)
+        self.assertEqual((['2b', '1b', '4w', '3b']), next_state_node3.state)
+        self.assertEqual(3, next_state_node3.cost)
         self.assertEqual(2, next_state_node3.flip_index)
 
         next_state_node4 = get_next_state(test_start_state_node, 3)
-        self.assertEqual((['4b', '1w', '2w', '3w']), next_state_node4.state)
-        self.assertEqual(1, next_state_node4.cost)
+        self.assertEqual((['3w', '2b', '1b', '4w']), next_state_node4.state)
+        self.assertEqual(4, next_state_node4.cost)
         self.assertEqual(3, next_state_node4.flip_index)
 
     def test_goal_test(self):
@@ -71,7 +71,7 @@ class PancakeTests(unittest.TestCase):
         self.assertEqual(9, solution2.count('\n'))
 
         self.assertTrue("1w2w3w4w" in solution3)
-        self.assertEqual(9, solution3.count('\n'))
+        self.assertEqual(7, solution3.count('\n'))
 
     def test_a_star_search(self):
         solution = run_a_star_search(['4b', '3b', '2b', '1b'])
@@ -85,13 +85,13 @@ class PancakeTests(unittest.TestCase):
         self.assertEqual(11, solution2.count('\n'))
 
         self.assertTrue("1w2w3w4w" in solution3)
-        self.assertEqual(10, solution3.count('\n'))
+        self.assertEqual(8, solution3.count('\n'))
 
     def test_compare_searches(self):
         solution_a_star = run_a_star_search(['1b', '2b', '3b', '4w'])
         solution_bfs = run_bfs(['1b', '2b', '3b', '4w'], show_costs=True)
-        self.assertTrue("1w2w3w4w g=19" in solution_a_star)
-        self.assertTrue("1w2w3w4w g=23" in solution_bfs)
+        self.assertTrue("1w2w3w4w g=13" in solution_a_star)
+        self.assertTrue("1w2w3w4w g=15" in solution_bfs)
 
 
 if __name__ == '__main__':

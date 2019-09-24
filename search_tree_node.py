@@ -8,7 +8,7 @@ class SearchTreeNode:
         # The flip action that was taken to arrive in this state
         self.flip_index = flip_index
         # The cost of the flip action that was taken to arrive in this state
-        self.cost = len(state)-self.flip_index if flip_index is not None else None
+        self.cost = self.flip_index + 1 if flip_index is not None else None
         self.parent = None
         self.children = children
 
