@@ -1,5 +1,4 @@
 # Burnt Pancake Search Problem
-repo: https://github.com/CarltonTB/BurntPancakeSearchProblem  
 Python version: 3.6  
 
 Implementations of breadth-first search and A* search to get solutions to the burnt pancake problem.  
