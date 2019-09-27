@@ -126,17 +126,28 @@ def run_bfs(start_state, show_costs=False):
     fringe = queue.Queue()
     # first, we enqueue the start state
     fringe.put(search_tree_root)
+    # maintain a list of nodes we have visited already so we don't visit duplicates,
+    # since the optimal solution cannot involve the same state twice
+    visited = set()
     # Next, do BFS until the goal is in the fringe
+    nodes_visited = 0
     print("Running BFS...")
     while not fringe.empty():
         node_to_expand = fringe.get()
+        nodes_visited += 1
+        visited.add(node_to_expand.state_string)
         if goal_test(node_to_expand.state):
             print("Solution found:\n")
             solution_string = get_solution_string(node_to_expand, show_costs=show_costs)
             print(solution_string)
+            # For debugging:
+            # print("Nodes Visited: " + str(nodes_visited))
             return solution_string
         else:
             possible_next_states = get_possible_next_states(node_to_expand)
+            for node in possible_next_states:
+                if visited.__contains__(node.state_string):
+                    possible_next_states.remove(node)
             # put the possible next states in descending order based on tie-breaker id
             possible_next_states = sorted(possible_next_states, key=get_tie_breaker_id, reverse=True)
             for new_state_node in possible_next_states:
@@ -155,17 +166,26 @@ def run_a_star_search(start_state, show_costs=True):
     g = 0
     # first, we enqueue the start state
     fringe.put((g + heuristic(start_state), search_tree_root))
+    visited = set()
+    nodes_visited = 0
     # Next, do A* until the goal is dequeue'd from the priority queue
     print("Running A* search...")
     while not fringe.empty():
         node_to_expand = fringe.get()[1]
+        nodes_visited += 1
+        visited.add(node_to_expand.state_string)
         if heuristic(node_to_expand.state) == 0:
             print("Solution found:\n")
             solution_string = get_solution_string(node_to_expand, show_costs=show_costs)
             print(solution_string)
+            # For debugging:
+            # print("Nodes Visited: " + str(nodes_visited))
             return solution_string
         else:
             possible_next_states = get_possible_next_states(node_to_expand)
+            for node in possible_next_states:
+                if visited.__contains__(node.state_string):
+                    possible_next_states.remove(node)
             # put the possible next states in the priority queue based on f(n) value
             for new_state_node in possible_next_states:
                 node_to_expand.add_child(new_state_node)

@@ -90,6 +90,13 @@ class PancakeTests(unittest.TestCase):
     def test_compare_searches(self):
         solution_a_star = run_a_star_search(['1b', '2b', '3b', '4w'])
         solution_bfs = run_bfs(['1b', '2b', '3b', '4w'], show_costs=True)
+
+        solution_a_star2 = run_a_star_search(['1b', '2b', '3b', '4b'])
+        solution_bfs2 = run_bfs(['1b', '2b', '3b', '4b'], show_costs=True)
+
+        self.assertTrue("1w2w3w4w g=20" in solution_a_star2)
+        self.assertTrue("1w2w3w4w g=28" in solution_bfs2)
+
         self.assertTrue("1w2w3w4w g=13" in solution_a_star)
         self.assertTrue("1w2w3w4w g=15" in solution_bfs)
 
