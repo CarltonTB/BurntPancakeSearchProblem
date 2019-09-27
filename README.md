@@ -1,5 +1,7 @@
 # Burnt Pancake Search Problem
 repo: https://github.com/CarltonTB/BurntPancakeSearchProblem  
+Python version: 3.6  
+
 Implementations of breadth-first search and A* search to get solutions to the burnt pancake problem.  
 States are represented in the form 1b2b3b4w where the number is the pancake size, e.g. 4 is the largest and   
 1 is the smallest. w means white side up and b means burnt side up, and the goal state is 1w2w3w4w.  
