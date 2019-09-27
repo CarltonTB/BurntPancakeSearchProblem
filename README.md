@@ -4,25 +4,25 @@ Implementations of breadth-first search and A* search to get solutions to the bu
 States are represented in the form 1b2b3b4w where the number is the pancake size, e.g. 4 is the largest and   
 1 is the smallest. w means white side up and b means burnt side up, and the goal state is 1w2w3w4w.  
 
-A* search example:
-
+A* search example ( “-a” indicates to do A* search):  
+ 
 Input:
-1b2b3b4w-a                # “-a” indicates to do A* search  
+1b2b3b4w-a               
 
 Output (possible):  
 1b|2b3b4w g=0, h=3  
-1w2b3b|4w g=1, h=3  
-3w|2w1b4w g=4, h=3  
-3b2w1b|4w g=5, h=3  
-1w2b|3w4w g=8, h=2  
-2w|1b3w4w g=10, h=2  
-2b1b|3w4w g=11, h=2  
+1w2b|3b4w g=1, h=3  
+2w|1b3b4w g=3, h=3  
+2b1b|3b4w g=4, h=3  
+1w2w3b|4w g=6, h=3  
+3w|2b1b4w g=9, h=3  
+3b2b1b|4w g=10, h=3  
 1w2w3w4w g=13, h=0  
 
-BFS example:  
+BFS example (“-f” indicates to do BFS):  
 
 Input:  
-4b3b2b1b-f                # “-f” indicates to do BFS  
+4b3b2b1b-f  
 
 Output:  
 4b3b2b1b|  
