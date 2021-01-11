@@ -168,8 +168,8 @@ def run_a_star_search(start_state, show_costs=True):
      white side facing up.
     :param show_costs: Whether or not to print the costs at each step along the solution path
     :return: A string showing the optimal solution that was found. The solution is a sequence of pancake flipping
-    actions that gets the stack into the goal state of 1w2w3w4w. The goal state has the pancakes sorted by size
-     and all pancakes have the white side facing up and burnt side facing down.
+    actions that gets the stack into the goal state of 1w2w3w4w with the fewest total pancakes flipped. The goal state has
+    the pancakes sorted by size and all pancakes have the white side facing up and burnt side facing down.
     """
     search_tree_root = SearchTreeNode(start_state, "".join(start_state), {})
     # The fringe is a priority queue, with the priority number being the value returned from the function:
