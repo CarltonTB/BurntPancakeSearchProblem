@@ -164,7 +164,7 @@ def run_a_star_search(start_state, show_costs=True):
      and flipped upside down.
     :param start_state: The initial state of the pancakes in a list of strings like ['1b', '2b', '3b', '4w'], which describes
     how they are stacked and which sides are facing up for each pancake. The string at index 0 is the pancake on the top
-     of the stack, and 1b means the smallest pancake with it's burnt side facing up. 4w means the largest pancake with it's
+     of the stack, and 1b means the smallest pancake with its burnt side facing up. 4w means the largest pancake with its
      white side facing up.
     :param show_costs: Whether or not to print the costs at each step along the solution path
     :return: A string showing the optimal solution that was found. The solution is a sequence of pancake flipping
