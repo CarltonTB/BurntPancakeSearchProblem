@@ -157,18 +157,33 @@ def run_bfs(start_state, show_costs=False):
 
 
 def run_a_star_search(start_state, show_costs=True):
-    """given a starting state that is a list of strings, run A* search
-     and print all steps taken to get to the goal state"""
+    """
+    Given a starting state that is a list of strings, run A* search to find the optimal solution
+     and print all steps taken to get to the goal state. Each step in the solution is a pancake flipping action where the
+     spatula is inserted into the stack of pancakes at some index, and all pancakes above the spatula are reversed in order
+     and flipped upside down.
+    :param start_state: The initial state of the pancakes in a list of strings like ['1b', '2b', '3b', '4w'], which describes
+    how they are stacked and which sides are facing up for each pancake. The string at index 0 is the pancake on the top
+     of the stack, and 1b means the smallest pancake with it's burnt side facing up. 4w means the largest pancake with it's
+     white side facing up.
+    :param show_costs: Whether or not to print the costs at each step along the solution path
+    :return: A string showing the optimal solution that was found. The solution is a sequence of pancake flipping
+    actions that gets the stack into the goal state of 1w2w3w4w. The goal state has the pancakes sorted by size
+     and all pancakes have the white side facing up and burnt side facing down.
+    """
     search_tree_root = SearchTreeNode(start_state, "".join(start_state), {})
-    # The fringe is a priority queue, with the priority number being the value return from the function:
+    # The fringe is a priority queue, with the priority number being the value returned from the function:
     # f(n) = g(n) + h(n)
+    # g(n) is the cost function where the value is the total number of pancakes that needed to be flipped to reach
+    # a particular search tree node
     fringe = queue.PriorityQueue()
     g = 0
     # first, we enqueue the start state
     fringe.put((g + heuristic(start_state), search_tree_root))
+    # Initialize the set of states that have been visited to empty
     visited = set()
     nodes_visited = 0
-    # Next, do A* until the goal is dequeue'd from the priority queue
+    # Next, do A* search until the goal state is dequeue'd from the priority queue
     print("Running A* search...")
     while not fringe.empty():
         node_to_expand = fringe.get()[1]
@@ -185,12 +200,15 @@ def run_a_star_search(start_state, show_costs=True):
             possible_next_states = get_possible_next_states(node_to_expand)
             for node in possible_next_states:
                 if visited.__contains__(node.state_string):
+                    # Never visit the same state twice
                     possible_next_states.remove(node)
-            # put the possible next states in the priority queue based on f(n) value
+            # put the possible next states in the fringe priority queue based on f(n) value
             for new_state_node in possible_next_states:
                 node_to_expand.add_child(new_state_node)
                 fringe.put(
                     (get_total_cost_along_path(new_state_node) + heuristic(new_state_node.state), new_state_node))
+
+    # If the fringe is empty without ever reaching the goal state then the search must have failed
     return "Error: failed to find a solution using A* search"
 
 
